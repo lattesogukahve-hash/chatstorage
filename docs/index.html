@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ChatStorage — Placeholder Frontend</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;margin:2rem}
+    textarea{width:100%;height:200px}
+    input,button{padding:.5rem;margin:.25rem 0}
+    .box{border:1px solid #ddd;padding:1rem;border-radius:6px}
+  </style>
+</head>
+<body>
+  <h1>ChatStorage — Placeholder Frontend</h1>
+  <p>Depodaki <code>ChatStorage_connected.html</code> dosyası şu anda boş görünüyor. Eğer elindeki gerçek HTML'yi buraya yapıştırırsan ben bunu doğrudan index.html olarak güncelleyebilirim.</p>
+
+  <div class="box">
+    <h2>Hızlı Test: API adresi ve anahtar</h2>
+    <label>API Base URL (ör. https://example.com):</label>
+    <input id="apiBase" placeholder="https://example.com" />
+    <br />
+    <label>API Key (gizli, repoya koyma):</label>
+    <input id="apiKey" placeholder="X-API-KEY" />
+    <br />
+    <button id="save">Kaydet (localStorage)</button>
+    <button id="check">/api/status kontrol et</button>
+    <pre id="out"></pre>
+  </div>
+
+  <h2>Yönergeler</h2>
+  <ol>
+    <li>Elindeki gerçek <code>ChatStorage_connected.html</code> dosyasının içeriğini buraya yapıştır veya repo'ya yükle.</li>
+    <li>Pages yayınlamak için GitHub > Settings → Pages → Source kısmında <strong>branch</strong> olarak <code>feature/gh-pages-deploy</code> veya <code>main</code> seçip <code>/docs</code> veya <code>/ (root)</code> seçeneğini kullan.</li>
+    <li>Backend'in çalışacağı adresi "API Base URL" alanına gir (örn. Render veya Cloudflare Tunnel adresi).</li>
+    <li>API anahtarını asla repoya koyma; sadece bu sayfada tarayıcıya kaydetmek için kullan.</li>
+  </ol>
+
+  <script>
+    const out = document.getElementById('out');
+    document.getElementById('save').onclick = () => {
+      localStorage.setItem('chatstorage_api_base', document.getElementById('apiBase').value);
+      localStorage.setItem('chatstorage_api_key', document.getElementById('apiKey').value);
+      out.textContent = 'Saved.';
+    };
+    document.getElementById('check').onclick = async () => {
+      const base = localStorage.getItem('chatstorage_api_base') || document.getElementById('apiBase').value;
+      const key = localStorage.getItem('chatstorage_api_key') || document.getElementById('apiKey').value;
+      if(!base){ out.textContent = 'API base URL gerekli.'; return; }
+      try{
+        const res = await fetch(new URL('/api/status', base), { headers: { 'x-api-key': key } });
+        const txt = await res.text();
+        out.textContent = `Status ${res.status}: ` + txt;
+      }catch(e){ out.textContent = 'Hata: ' + e.message; }
+    };
+  </script>
+</body>
+</html>
